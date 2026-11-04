@@ -1,30 +1,29 @@
-import { AppSidebar } from "@/components/app-sidebar"
-import { SiteHeader } from "@/components/site-header"
-import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
+import { useEffect } from "react"
+import { useRouter } from "next/navigation"
+import { authClient } from "@/lib/auth-client"
+import { Button } from "@/components/ui/button"
 
-export const iframeHeight = "800px"
+export default function DashboardPage(){
+  const router = useRouter()
+  const { data: session, isPending } = authClient.useSession()
 
-export const description = "A sidebar with a header and a search form."
+  useEffect(() => {
+    if(!isPending && !session) router.replace("/login")
+  }, [isPending, session, router])
 
-export default function Page() {
-  return (
-    <div className="[--header-height:calc(--spacing(14))]">
-      <SidebarProvider className="flex flex-col">
-        <SiteHeader />
-        <div className="flex flex-1">
-          <AppSidebar />
-          <SidebarInset>
-            <div className="flex flex-1 flex-col gap-4 p-4">
-              <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-                <div className="aspect-video rounded-xl bg-muted/50" />
-                <div className="aspect-video rounded-xl bg-muted/50" />
-                <div className="aspect-video rounded-xl bg-muted/50" />
-              </div>
-              <div className="min-h-screen flex-1 rounded-xl bg-muted/50 md:min-h-min" />
-            </div>
-          </SidebarInset>
-        </div>
-      </SidebarProvider>
-    </div>
+  if (isPending || !session) return null
+
+  return(
+    <main className="p-8">
+      <h1 className="text-xl font-semibold">Hi, {session.user.name}</h1>
+    <Button 
+      className="mt-4"
+      onClick={()=>
+        authClient.signOut({fetchOptions: { onSuccess:() => router.push("/login")}})
+      }>
+        Sign Out
+      </Button>
+    </main>
+
   )
 }
