@@ -26,8 +26,7 @@ export function SiteHeader() {
           size="icon"
           onClick={toggleSidebar}
         >
-          <PanelLeftIcon
-          />
+          <PanelLeftIcon />
         </Button>
         <Separator
           orientation="vertical"
