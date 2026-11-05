@@ -86,7 +86,10 @@ export function LoginForm({
               </div>
 
               {formError && (
-                <p role="alert" className="text-center text-sm text-destructive">
+                <p
+                  role="alert"
+                  className="text-center text-sm text-destructive"
+                >
                   {formError}
                 </p>
               )}

@@ -60,7 +60,7 @@ export function SignupForm({
       setFormError(
         error.status === 429
           ? "Too many attempts. Please wait a minute and try again."
-          : "We couldn't create your account. Check your details and try again.",
+          : "We couldn't create your account. Check your details and try again."
       )
       return
     }
