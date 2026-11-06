@@ -1,5 +1,8 @@
 "use client"
 
+import { Fragment } from "react"
+import { usePathname } from "next/navigation"
+
 import { SearchForm } from "@/components/search-form"
 import {
   Breadcrumb,
@@ -14,8 +17,15 @@ import { Separator } from "@/components/ui/separator"
 import { useSidebar } from "@/components/ui/sidebar"
 import { PanelLeftIcon } from "lucide-react"
 
+function toTitle(segment: string) {
+  const text = segment.replace(/-/g, " ")
+  return text.charAt(0).toUpperCase() + text.slice(1)
+}
+
 export function SiteHeader() {
   const { toggleSidebar } = useSidebar()
+  const pathname = usePathname()
+  const segments = pathname.split("/").filter(Boolean)
 
   return (
     <header className="sticky top-0 z-50 flex w-full items-center border-b bg-background">
@@ -34,13 +44,22 @@ export function SiteHeader() {
         />
         <Breadcrumb className="hidden sm:block">
           <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbLink href="#">Build Your Application</BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbPage>Data Fetching</BreadcrumbPage>
-            </BreadcrumbItem>
+            {segments.map((segment, index) => {
+              const href = "/" + segments.slice(0, index + 1).join("/")
+              const isLast = index === segments.length - 1
+              return (
+                <Fragment key={href}>
+                  <BreadcrumbItem>
+                    {isLast ? (
+                      <BreadcrumbPage>{toTitle(segment)}</BreadcrumbPage>
+                    ) : (
+                      <BreadcrumbLink href={href}>{toTitle(segment)}</BreadcrumbLink>
+                    )}
+                  </BreadcrumbItem>
+                  {!isLast && <BreadcrumbSeparator />}
+                </Fragment>
+              )
+            })}
           </BreadcrumbList>
         </Breadcrumb>
         <SearchForm className="w-full sm:ml-auto sm:w-auto" />
